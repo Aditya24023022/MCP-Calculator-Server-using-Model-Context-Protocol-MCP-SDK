@@ -1,70 +1,135 @@
-# y MCP Server
+## 🧮 MCP Calculator Server — Build Your First MCP Tool with TypeScript
 
-Performs simple math using MCP
+A lightweight **Model Context Protocol (MCP) server** built in **TypeScript** using the official `@modelcontextprotocol/sdk`.
+This server exposes a simple tool that performs **addition of two numbers**, showcasing how to build custom MCP-compatible tools.
 
-This is a TypeScript-based MCP server that implements a simple notes system. It demonstrates core MCP concepts by providing:
+---
 
-- Resources representing text notes with URIs and metadata
-- Tools for creating new notes
-- Prompts for generating summaries of notes
+### 🚀 Features
 
-## Features
+* Built using the official **MCP SDK**
+* Implements a simple calculator with an `add` function
+* Written in **TypeScript**
+* Easy to extend for new MCP tools
 
-### Resources
-- List and access notes via `note://` URIs
-- Each note has a title, content and metadata
-- Plain text mime type for simple content access
+---
 
-### Tools
-- `create_note` - Create new text notes
-  - Takes title and content as required parameters
-  - Stores note in server state
+### 📁 Project Structure
 
-### Prompts
-- `summarize_notes` - Generate a summary of all stored notes
-  - Includes all note contents as embedded resources
-  - Returns structured prompt for LLM summarization
+```
+my-calculator/
+│
+├── src/
+│   └── index.ts          # Main server logic
+├── package.json
+├── tsconfig.json
+└── README.md
+```
 
-## Development
+---
 
-Install dependencies:
+### ⚙️ Setup Instructions
+
+#### 1. Clone the Repository
+
+```bash
+git clone https://github.com/<your-username>/mcp-calculator-server.git
+cd mcp-calculator-server
+```
+
+#### 2. Install Dependencies
+
+Make sure you have **Node.js (v18+)** and **npm** installed.
+
 ```bash
 npm install
 ```
 
-Build the server:
+#### 3. Build the Project
+
 ```bash
 npm run build
 ```
 
-For development with auto-rebuild:
-```bash
-npm run watch
-```
-
-## Installation
-
-To use with Claude Desktop, add the server config:
-
-On MacOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
-On Windows: `%APPDATA%/Claude/claude_desktop_config.json`
-
-```json
-{
-  "mcpServers": {
-    "y": {
-      "command": "/path/to/y/build/index.js"
-    }
-  }
-}
-```
-
-### Debugging
-
-Since MCP servers communicate over stdio, debugging can be challenging. We recommend using the [MCP Inspector](https://github.com/modelcontextprotocol/inspector), which is available as a package script:
+#### 4. Start the MCP Server
 
 ```bash
-npm run inspector
+npm run start
 ```
 
-The Inspector will provide a URL to access debugging tools in your browser.
+You should see:
+
+```
+✅ MCP Calculator Server is running...
+```
+
+---
+
+### 🧠 How It Works
+
+The project uses `@modelcontextprotocol/sdk` to create a minimal MCP server.
+
+```ts
+import { server } from "@modelcontextprotocol/sdk/server/stdio";
+import { z } from "zod";
+
+const s = server({
+  name: "MCP Calculator Server",
+});
+
+s.tool(
+  "add",
+  {
+    a: z.number(),
+    b: z.number(),
+  },
+  async ({ a, b }) => ({
+    content: [{ type: "text", text: `Result: ${a + b}` }],
+  })
+);
+
+s.start();
+console.log("✅ MCP Calculator Server is running...");
+```
+
+This registers an `add` tool, which takes two numbers (`a`, `b`) and returns their sum.
+
+---
+
+### 🧩 Testing (Optional)
+
+If you want to test manually:
+
+```bash
+npm run start
+```
+
+Then, you can connect this server to any **MCP-compatible client** (like **Claude Desktop**, **ChatGPT with MCP**, or other integrations).
+
+---
+
+### 🧱 Build Commands Reference
+
+| Command         | Description                         |
+| --------------- | ----------------------------------- |
+| `npm run build` | Compiles TypeScript into JavaScript |
+| `npm run start` | Starts the MCP server with ts-node  |
+| `npm install`   | Installs all dependencies           |
+
+---
+
+### 🧰 Tech Stack
+
+* **TypeScript**
+* **Node.js**
+* **Model Context Protocol SDK**
+* **Zod (Schema validation)**
+
+---
+
+### 📜 License
+
+MIT License — feel free to fork and modify.
+
+
+
